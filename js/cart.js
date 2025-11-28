@@ -147,7 +147,7 @@ async function handlePurchase() {
   };
 
   try {
-    const response = await fetch('http://127.0.0.1:3004/api/cart', {
+    const response = await getJSONData(CART_BUY_URL, {
       method: 'POST',
       body: JSON.stringify(data),
       headers: {
@@ -155,7 +155,7 @@ async function handlePurchase() {
       },
     });
 
-    if (!response.ok) {
+    if (response.status === 'error') {
       console.error('Error al enviar los datos al servidor.');
       showErrorMessages([
         'Hubo un error al procesar su compra. Por favor, intente nuevamente más tarde.',

@@ -138,7 +138,7 @@ document.addEventListener("DOMContentLoaded", function(e){
                 //FUNCIONALIDAD NO IMPLEMENTADA
                 if (resultObj.status === 'ok')
                 {
-                    msgToShow = MSG;
+                    msgToShow = resultObj.data.msg;
                     document.getElementById("alertResult").classList.add('alert-primary');
                 }
                 else if (resultObj.status === 'error')

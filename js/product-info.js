@@ -7,7 +7,7 @@ new Header(authorizedUser);
 
 const productID = localStorage.getItem('productID');
 
-getJSONData(`${PRODUCT_INFO_URL}${productID}${EXT_TYPE}`)
+getJSONData(`${PRODUCT_INFO_URL}${productID}`)
     .then((response) => {
         const data = response.data;
 
@@ -92,7 +92,7 @@ function showStars(rating) {
     return estrellas;
 }
 
-getJSONData(`${PRODUCT_INFO_COMMENTS_URL}${productID}${EXT_TYPE}`).then(
+getJSONData(`${PRODUCT_INFO_COMMENTS_URL}${productID}`).then(
     (response) => {
         if (response.data.length === 0) {
             commentsContainer.classList.add('d-none')
