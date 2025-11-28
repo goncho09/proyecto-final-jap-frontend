@@ -143,28 +143,32 @@ async function handlePurchase() {
   const data = {
     userId: authorizedUser,
     cart: JSON.parse(localStorage.getItem('carrito')),
+    shipping: JSON.parse(localStorage.getItem('shipping')),
   };
 
-  console.log('Compra realizada.Enviando datos al servidor...');
+  try {
+    const response = await fetch('http://127.0.0.1:3004/api/cart', {
+      method: 'POST',
+      body: JSON.stringify(data),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
 
-  const response = await fetch('http://127.0.0.1:3004/api/cart', {
-    method: 'POST',
-    body: JSON.stringify(data),
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  });
-
-  if (!response.ok) {
-    console.error('Error al enviar los datos al servidor.');
+    if (!response.ok) {
+      console.error('Error al enviar los datos al servidor.');
+      showErrorMessages([
+        'Hubo un error al procesar su compra. Por favor, intente nuevamente más tarde.',
+      ]);
+      return;
+    }
+  } catch (error) {
+    console.error('Error al conectar con el servidor:');
     showErrorMessages([
-      'Hubo un error al procesar su compra. Por favor, intente nuevamente más tarde.',
+      'No se pudo conectar con el servidor. Por favor, intente nuevamente más tarde.',
     ]);
     return;
   }
-
-  console.log('Datos enviados al servidor correctamente.');
-
   // Si no hay errores, mostrar éxito
   showSuccessMessage();
 }
@@ -207,37 +211,43 @@ function updatePayment(subtotal) {
   const paymentMethodLabel = document.getElementById('payment-method-label');
   const paymentMethodHr = document.getElementById('payment-method-hr');
   let result = 0;
+
+  if (!shippingSelect || !paymentMethodLabel || !paymentMethodHr) return 0;
+
   if (shippingSelect.value) {
     paymentMethodLabel.classList.remove('d-none');
     paymentMethodHr.classList.remove('d-none');
+  } else {
+    paymentMethodLabel.classList.add('d-none');
+    paymentMethodHr.classList.add('d-none');
+    localStorage.removeItem('shipping'); // remove stored shipping when none selected
+    return 0;
   }
+
+  const optionText =
+    shippingSelect.querySelector(`#${shippingSelect.value}`)?.textContent ||
+    shippingSelect.value;
 
   if (shippingSelect.value === 'standard') {
     result = subtotal * 0.05;
-    paymentMethodLabel.textContent = `Envio ${
-      shippingSelect.querySelector(`#${shippingSelect.value}`).textContent
-    } $${result.toLocaleString()}`;
-
-    return result;
-  }
-
-  if (shippingSelect.value === 'express') {
+  } else if (shippingSelect.value === 'express') {
     result = subtotal * 0.07;
-    paymentMethodLabel.textContent = `Envio ${
-      shippingSelect.querySelector(`#${shippingSelect.value}`).textContent
-    } $${result.toLocaleString()}`;
-
-    return result;
-  }
-
-  if (shippingSelect.value === 'premium') {
+  } else if (shippingSelect.value === 'premium') {
     result = subtotal * 0.15;
-    paymentMethodLabel.textContent = `Envio ${
-      shippingSelect.querySelector(`#${shippingSelect.value}`).textContent
-    } $${result.toLocaleString()}`;
-
-    return result;
   }
+
+  // keep two decimals
+  result = Math.round(result * 100) / 100;
+
+  paymentMethodLabel.textContent = `Envio ${optionText} $${result.toLocaleString()}`;
+
+  // Persist shipping choice and cost so localStorage reflects the UI
+  localStorage.setItem(
+    'shipping',
+    JSON.stringify({ method: shippingSelect.value, cost: result })
+  );
+
+  return result;
 }
 
 function increaseUnit(id, quantityInput) {
