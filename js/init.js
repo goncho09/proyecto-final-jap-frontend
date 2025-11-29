@@ -40,3 +40,12 @@ let getJSONData = function(url){
     });
 }
 
+// Función para obtener el token JWT (para futuras peticiones)
+function getJWTToken() {
+    return localStorage.getItem('jwtToken');
+}
+
+// Función para verificar si el usuario está autenticado con JWT
+function isAuthenticated() {
+    return !!localStorage.getItem('jwtToken');
+}
