@@ -8,7 +8,7 @@ let currentCategory = "";
 
 const searchInput = document.getElementById('searchInput');
 
-getJSONData(`${PRODUCTS_URL}${localStorage.getItem('catID')}${EXT_TYPE}`)
+getJSONData(`${PRODUCTS_URL}${localStorage.getItem('catID')}`)
     .then(response => {
         const products = response.data.products;
         currentCategory = response.data.catName;
