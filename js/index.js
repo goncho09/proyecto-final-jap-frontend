@@ -1,10 +1,10 @@
-import { authorizedUser, checkSession } from "./util/checkLogin.js";
+import { token, checkSession, userAuthorized } from "./util/checkLogin.js";
 import { Header } from "./header.js";
 
-checkSession(!authorizedUser, './login.html');
-new Header(authorizedUser);
+checkSession(!token, './login.html');
+new Header(userAuthorized);
 
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", async function () {
     document.getElementById("autos").addEventListener("click", function () {
         localStorage.setItem("catID", 101);
         window.location = "products.html"

@@ -1,6 +1,6 @@
-import { authorizedUser, checkSession } from "./util/checkLogin.js";
+import { token, checkSession } from "./util/checkLogin.js";
 
-checkSession(authorizedUser, './');
+checkSession(token, './'); //go to index.html
 
 const form = document.getElementById('loginForm');
 
@@ -12,7 +12,7 @@ form.addEventListener('submit', async function (e) {
 
     if (user && password) {
         try {
-            const response = await fetch('http://localhost:3004/login', {
+            const response = await getJSONData('http://localhost:3004/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -20,24 +20,26 @@ form.addEventListener('submit', async function (e) {
                 body: JSON.stringify({ user, password })
             });
 
-            const result = await response.json();
+            // Guardar token JWT y datos del usuario
+            localStorage.setItem('jwtToken', response.data.token);
 
-            if (result.success) {
-                // Guardar token JWT y datos del usuario
-                localStorage.setItem('jwtToken', result.token);
-                localStorage.setItem('currentUser', JSON.stringify(result.user));
-                localStorage.setItem('usuarioAutenticado', result.user.username);
-                
-                // Redirigir al inicio
-                window.location.replace('./index.html');
-            } else {
-                alert(result.message);
+            const response22 = await getJSONData('http://localhost:3004/api/auth/check-session', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'access-token': localStorage.getItem('jwtToken')
+                },
+            });
+
+            if (response22.status === 'ok') {
+                localStorage.setItem('usuarioAutenticado', response22.data.user.email);
             }
+
+            // Redirigir al inicio
+            window.location.replace('./');
         } catch (error) {
             console.error('Error en login:', error);
             alert('Error de conexión con el servidor. Verifica que el backend esté ejecutándose.');
         }
-    } else {
-        alert('Por favor completa ambos campos');
     }
 });

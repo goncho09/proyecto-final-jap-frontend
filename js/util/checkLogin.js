@@ -1,11 +1,11 @@
-const authorizedUser = localStorage.getItem('usuarioAutenticado');
+const token = localStorage.getItem('jwtToken');
+const userAuthorized = localStorage.getItem('usuarioAutenticado');
 
-function checkSession(hasSession, path) {
-    if(hasSession) {
+async function checkSession(hasSession, path) {
+    if (hasSession) {
         goTo(path);
         return;
     }
-
     showContent();
 }
 
@@ -17,4 +17,4 @@ function showContent() {
     document.querySelector('body').classList.toggle('d-none');
 }
 
-export { authorizedUser, checkSession };
+export { token, checkSession, userAuthorized };

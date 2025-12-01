@@ -39,6 +39,7 @@ export class Header {
 
     logOut() {
         localStorage.removeItem('usuarioAutenticado');
+        localStorage.removeItem('jwtToken');
     }
 
     changeTheme(event) {

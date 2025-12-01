@@ -11,6 +11,8 @@
     <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon">
     <link href="css/styles.css" rel="stylesheet">
     <link href="css/login.css" rel="stylesheet">
+    <script defer src="js/login.js" type="module"></script>
+    <script src="js/init.js"></script>
 </head>
 
 <body class="d-none">
@@ -38,7 +40,15 @@
             </div>
         </form>
     </section>
-    <script defer src="js/login.js" type="module"></script>
+
+    <div id="spinner-wrapper">
+        <div class="lds-ring">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </div>
 </body>
 
 </html>

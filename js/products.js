@@ -1,7 +1,7 @@
-import {  authorizedUser, checkSession} from "./util/checkLogin.js";
+import {  token, checkSession, userAuthorized} from "./util/checkLogin.js";
 import { Header } from "./header.js";
-checkSession(!authorizedUser, './login.html');
-new Header(authorizedUser);
+checkSession(!token, './login.html');
+new Header(userAuthorized);
 
 const containerProducts = document.getElementById('products');
 let currentCategory = "";

@@ -1,8 +1,8 @@
-import { authorizedUser, checkSession } from './util/checkLogin.js';
+import { token, checkSession, userAuthorized} from './util/checkLogin.js';
 import { Header } from './header.js';
 
-checkSession(!authorizedUser, './login.html');
-new Header(authorizedUser);
+checkSession(!token, './login.html');
+new Header(userAuthorized);
 
 const numberProducts = document.getElementById('number-products');
 
@@ -141,7 +141,7 @@ async function handlePurchase() {
   }
 
   const data = {
-    userId: authorizedUser,
+    userId: userAuthorized,
     cart: JSON.parse(localStorage.getItem('carrito')),
     shipping: JSON.parse(localStorage.getItem('shipping')),
   };
@@ -152,6 +152,7 @@ async function handlePurchase() {
       body: JSON.stringify(data),
       headers: {
         'Content-Type': 'application/json',
+        'access-token': token
       },
     });
 
