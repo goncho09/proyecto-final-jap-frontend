@@ -1,9 +1,9 @@
-import { authorizedUser, checkSession } from "./util/checkLogin.js";
+import { token, checkSession, userAuthorized  } from "./util/checkLogin.js";
 import { Header } from "./header.js";
 import { successAlert, warningAlert } from "./util/alerts.js";
 
-checkSession(!authorizedUser, './login.html');
-new Header(authorizedUser);
+checkSession(!token, './login.html');
+new Header(userAuthorized);
 
 let inputImage = document.getElementById('img-input');
 let imgProfile = document.getElementById('img-profile');
@@ -37,7 +37,7 @@ profileForm.addEventListener('submit', (event) => {
         return;
     }
 
-    const userProfile = profiles.find(profile => profile.user === authorizedUser);
+    const userProfile = profiles.find(profile => profile.user === userAuthorized);
 
     if (!userProfile) {
         let profile = {
@@ -61,10 +61,10 @@ profileForm.addEventListener('submit', (event) => {
 });
 
 function loadInformation() {
-    const userProfile = profiles.find(profile => profile.user === authorizedUser);
+    const userProfile = profiles.find(profile => profile.user === userAuthorized);
 
     if (!localStorage.profiles || !userProfile) {
-        email.value = authorizedUser;
+        email.value = userAuthorized;
         return;
     }
 

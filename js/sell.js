@@ -1,8 +1,8 @@
-import {  authorizedUser, checkSession} from "./util/checkLogin.js";
+import { token, checkSession, userAuthorized } from "./util/checkLogin.js";
 import { Header } from './header.js';
 
-checkSession(!authorizedUser, './login.html');
-new Header(authorizedUser);
+checkSession(!token, './login.html');
+new Header(userAuthorized);
 
 let productCost = 0;
 let productCount = 0;
@@ -16,7 +16,7 @@ let PERCENTAGE_SYMBOL = '%';
 let MSG = "FUNCIONALIDAD NO IMPLEMENTADA";
 
 //Función que se utiliza para actualizar los costos de publicación
-function updateTotalCosts(){
+function updateTotalCosts() {
     let unitProductCostHTML = document.getElementById("productCostText");
     let comissionCostHTML = document.getElementById("comissionText");
     let totalCostHTML = document.getElementById("totalCostText");
@@ -33,39 +33,37 @@ function updateTotalCosts(){
 //Función que se ejecuta una vez que se haya lanzado el evento de
 //que el documento se encuentra cargado, es decir, se encuentran todos los
 //elementos HTML presentes.
-document.addEventListener("DOMContentLoaded", function(e){
-    document.getElementById("productCountInput").addEventListener("change", function(){
+document.addEventListener("DOMContentLoaded", function (e) {
+    document.getElementById("productCountInput").addEventListener("change", function () {
         productCount = this.value;
         updateTotalCosts();
     });
 
-    document.getElementById("productCostInput").addEventListener("change", function(){
+    document.getElementById("productCostInput").addEventListener("change", function () {
         productCost = this.value;
         updateTotalCosts();
     });
 
-    document.getElementById("goldradio").addEventListener("change", function(){
+    document.getElementById("goldradio").addEventListener("change", function () {
         comissionPercentage = 0.13;
         updateTotalCosts();
     });
 
-    document.getElementById("premiumradio").addEventListener("change", function(){
+    document.getElementById("premiumradio").addEventListener("change", function () {
         comissionPercentage = 0.07;
         updateTotalCosts();
     });
 
-    document.getElementById("standardradio").addEventListener("change", function(){
+    document.getElementById("standardradio").addEventListener("change", function () {
         comissionPercentage = 0.03;
         updateTotalCosts();
     });
 
-    document.getElementById("productCurrency").addEventListener("change", function(){
-        if (this.value == DOLLAR_CURRENCY)
-        {
+    document.getElementById("productCurrency").addEventListener("change", function () {
+        if (this.value == DOLLAR_CURRENCY) {
             MONEY_SYMBOL = DOLLAR_SYMBOL;
         }
-        else if (this.value == PESO_CURRENCY)
-        {
+        else if (this.value == PESO_CURRENCY) {
             MONEY_SYMBOL = PESO_SYMBOL;
         }
 
@@ -75,7 +73,7 @@ document.addEventListener("DOMContentLoaded", function(e){
 
     //Configuraciones para el elemento que sube archivos
     let dzoptions = {
-        url:"/",
+        url: "/",
         autoQueue: false
     };
     let myDropzone = new Dropzone("div#file-upload", dzoptions);
@@ -86,7 +84,7 @@ document.addEventListener("DOMContentLoaded", function(e){
 
     //Se agrega una escucha en el evento 'submit' que será
     //lanzado por el formulario cuando se seleccione 'Vender'.
-    sellForm.addEventListener("submit", function(e){
+    sellForm.addEventListener("submit", async function (e) {
 
         e.preventDefault();
         e.preventDefault();
@@ -104,52 +102,52 @@ document.addEventListener("DOMContentLoaded", function(e){
         //Se realizan los controles necesarios,
         //En este caso se controla que se haya ingresado el nombre y categoría.
         //Consulto por el nombre del producto
-        if (productNameInput.value === "")
-        {
+        if (productNameInput.value === "") {
             productNameInput.classList.add('is-invalid');
             infoMissing = true;
         }
 
         //Consulto por la categoría del producto
-        if (productCategory.value === "")
-        {
+        if (productCategory.value === "") {
             productCategory.classList.add('is-invalid');
             infoMissing = true;
         }
 
         //Consulto por el costo
-        if (productCost.value <=0)
-        {
+        if (productCost.value <= 0) {
             productCost.classList.add('is-invalid');
             infoMissing = true;
         }
 
-        if(!infoMissing)
-        {
+        if (!infoMissing) {
             //Aquí ingresa si pasó los controles, irá a enviar
             //la solicitud para crear la publicación.
 
-            getJSONData(PUBLISH_PRODUCT_URL).then(function(resultObj){
-                let msgToShowHTML = document.getElementById("resultSpan");
-                let msgToShow = "";
-
-                //Si la publicación fue exitosa, devolverá mensaje de éxito,
-                //de lo contrario, devolverá mensaje de error.
-                //FUNCIONALIDAD NO IMPLEMENTADA
-                if (resultObj.status === 'ok')
-                {
-                    msgToShow = resultObj.data.msg;
-                    document.getElementById("alertResult").classList.add('alert-primary');
-                }
-                else if (resultObj.status === 'error')
-                {
-                    msgToShow = MSG;
-                    document.getElementById("alertResult").classList.add('alert-primary');
-                }
-
-                msgToShowHTML.innerHTML = msgToShow;
-                document.getElementById("alertResult").classList.add("show");
+            const response = await getJSONData(PUBLISH_PRODUCT_URL, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'access-token': token
+                },
             });
+
+            let msgToShowHTML = document.getElementById("resultSpan");
+            let msgToShow = "";
+
+            //Si la publicación fue exitosa, devolverá mensaje de éxito,
+            //de lo contrario, devolverá mensaje de error.
+            //FUNCIONALIDAD NO IMPLEMENTADA
+            if (response.status === 'ok') {
+                msgToShow = response.data.msg;
+                document.getElementById("alertResult").classList.add('alert-primary');
+            }
+            else if (response.status === 'error') {
+                msgToShow = MSG;
+                document.getElementById("alertResult").classList.add('alert-primary');
+            }
+
+            msgToShowHTML.innerHTML = msgToShow;
+            document.getElementById("alertResult").classList.add("show");
         }
     });
 });

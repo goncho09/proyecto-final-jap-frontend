@@ -5,7 +5,6 @@ const PUBLISH_PRODUCT_URL = `${ROOT_PATH}/publish/`;
 const PRODUCTS_URL = `${ROOT_PATH}/categories/`;
 const PRODUCT_INFO_URL = `${ROOT_PATH}/products/`;
 const PRODUCT_INFO_COMMENTS_URL =`${ROOT_PATH}/products/comments/`
-const CART_INFO_URL = "https://japceibal.github.io/emercado-api/user_cart/";
 const CART_BUY_URL = `${ROOT_PATH}/cart/`;
 
 let showSpinner = function(){
@@ -41,12 +40,3 @@ let getJSONData = function(url, method = {}){
     });
 }
 
-// Función para obtener el token JWT (para futuras peticiones)
-function getJWTToken() {
-    return localStorage.getItem('jwtToken');
-}
-
-// Función para verificar si el usuario está autenticado con JWT
-function isAuthenticated() {
-    return !!localStorage.getItem('jwtToken');
-}
